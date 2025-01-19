@@ -16,15 +16,15 @@ const Login = () => {
               <form className="mt-8 space-y-4">
                 <div>
                   <label className="text-gray-800 text-sm mb-2 block">
-                    User name
+                  Email
                   </label>
                   <div className="relative flex items-center">
                     <input
-                      name="username"
+                      name="email"
                       type="text"
                       required=""
                       className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
-                      placeholder="Enter user name"
+                      placeholder="Enter user email"
                     />
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

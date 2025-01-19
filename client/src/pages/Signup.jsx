@@ -24,7 +24,7 @@ const Signup = () => {
               </div>
               <div>
                 <label className="text-gray-800 text-sm mb-2 block">
-                  Email Id
+                  Email
                 </label>
                 <input
                   name="email"
