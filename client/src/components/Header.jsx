@@ -38,7 +38,7 @@ const Header = () => {
                   Login
                 </button>
               </Link>
-              <Link to={"/login"}>
+              <Link to={"/"}>
                 <button className="px-5 py-2.5 rounded-lg text-sm tracking-wider font-medium border border-current outline-none bg-transparent hover:bg-black text-black hover:text-white transition-all duration-300">
                   Guest
                 </button>

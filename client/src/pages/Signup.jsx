@@ -1,9 +1,69 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { FaEyeSlash } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
+import { ToastContainer } from "react-toastify";
+import { handleError, handleSuccess } from "../Util";
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const [signInfo, setSignInfo] = useState({
+      name: "",
+      email: "",
+      password: "",
+    });
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+
+      const copySignInfo = { ...signInfo };
+      copySignInfo[name] = value;
+      setSignInfo(copySignInfo);
+  };
+   const handleSignup = async (e) => {
+     e.preventDefault();
+     const { name, email, password } = signInfo;
+     if (!name || !email || !password) {
+       return handleError("(Name & Email & Password) Fields Are Required");
+     }
+     if (!name) {
+       return handleError("Name Field Are Required");
+     }
+     if (!email) {
+       return handleError("Email Field Are Required");
+     }
+     if (!password) {
+       return handleError("Password Field Are Required");
+     }
+
+     try {
+       const url = "https://localhost:3000/api/v1/auth/registration";
+       const response = await fetch(url, {
+         method: "POST",
+         headers: {
+           "Content-Type": "application/json",
+         },
+
+         body: JSON.stringify(signInfo),
+       });
+       console.log(response);
+       const result = await response.json();
+       const { success, message, error } = result;
+       if (success) {
+         handleSuccess(message || "Signup successful");
+
+         setTimeout(() => {
+           navigate("/login");
+         }, 1000);
+       } else if (error) {
+         const details = error?.details[0].message;
+         handleError(details);
+       } else if (!success) {
+         handleError(message);
+       }
+     } catch (error) {
+       handleError(error);
+     }
+   };
   return (
     <div>
       <div className="flex flex-col justify-center font-[sans-serif]  p-4">
@@ -11,11 +71,13 @@ const Signup = () => {
           <div className="text-center mb-12">
             <h2 className="text-2xl font-bold">Registration Here</h2>
           </div>
-          <form>
+          <form onSubmit={handleSignup}>
             <div className="space-y-6">
               <div>
                 <label className="text-gray-800 text-sm mb-2 block">Name</label>
                 <input
+                  onChange={handleChange}
+                  value={signInfo.name}
                   name="name"
                   type="text"
                   className="text-gray-800 bg-white border border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500"
@@ -27,6 +89,8 @@ const Signup = () => {
                   Email
                 </label>
                 <input
+                  onChange={handleChange}
+                  value={signInfo.email}
                   name="email"
                   type="text"
                   className="text-gray-800 bg-white border border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500"
@@ -39,6 +103,8 @@ const Signup = () => {
                 </label>
                 <div className="relative flex items-center">
                   <input
+                    onChange={handleChange}
+                    value={signInfo.password}
                     name="password"
                     type={showPassword ? "text" : "password"}
                     required=""
@@ -58,17 +124,6 @@ const Signup = () => {
                     </span>
                   </div>
                 </div>
-              </div>
-              <div>
-                <label className="text-gray-800 text-sm mb-2 block">
-                  Confirm Password
-                </label>
-                <input
-                  name="password"
-                  type="password"
-                  className="text-gray-800 bg-white border border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500"
-                  placeholder="Enter confirm password"
-                />
               </div>
             </div>
             <div className="!mt-8">
@@ -91,6 +146,7 @@ const Signup = () => {
               </Link>
             </p>
           </form>
+          <ToastContainer />
         </div>
       </div>
     </div>

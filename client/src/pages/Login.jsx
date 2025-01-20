@@ -1,9 +1,68 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { FaEyeSlash } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
+import { handleError, handleSuccess } from "../Util";
+import { ToastContainer } from "react-toastify";
 const Login = () => {
-    const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const [loginInfo, setLoginInfo] = useState({
+      email: "",
+      password: "",
+    });
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+
+      const copyloginInfo = { ...loginInfo };
+      copyloginInfo[name] = value;
+      setLoginInfo(copyloginInfo);
+  };
+  const handleLogin = async (e) => {
+       e.preventDefault();
+       const { email, password } = loginInfo;
+
+       if (!email) {
+         return handleError("Email Field Are Required");
+       }
+       if (!password) {
+         return handleError("Password Field Are Required");
+       }
+       // if (!name || !email || !password) {
+       //   return handleError("(Name & Email & Password) Fields Are Required")
+       // }
+
+       try {
+         const url = "https://localhost:3000/api/v1/auth/login";
+         const response = await fetch(url, {
+           method: "POST",
+           headers: {
+             "Content-Type": "application/json",
+           },
+
+           body: JSON.stringify(loginInfo),
+         });
+         const result = await response.json();
+
+         const { success, message, error, token, name } = result;
+         if (success) {
+           handleSuccess(message || "Login successfully");
+           localStorage.setItem("jwtToken", token);
+           localStorage.setItem("loggedInUser", name);
+
+           setTimeout(() => {
+             navigate("/");
+           }, 1000);
+         } else if (error) {
+           const details = error?.details[0].message;
+           handleError(details);
+         } else if (!success) {
+           handleError(message);
+         }
+       } catch (error) {
+         handleError(error);
+       }
+    };
   return (
     <div>
       <div className="bg-gray-50 font-[sans-serif]">
@@ -13,13 +72,15 @@ const Login = () => {
               <h2 className="text-gray-800 text-center text-2xl font-bold">
                 Sign in
               </h2>
-              <form className="mt-8 space-y-4">
+              <form onSubmit={handleLogin} className="mt-8 space-y-4">
                 <div>
                   <label className="text-gray-800 text-sm mb-2 block">
-                  Email
+                    Email
                   </label>
                   <div className="relative flex items-center">
                     <input
+                      onChange={handleChange}
+                      value={loginInfo.email}
                       name="email"
                       type="text"
                       required=""
@@ -47,6 +108,8 @@ const Login = () => {
                   </label>
                   <div className="relative flex items-center">
                     <input
+                      onChange={handleChange}
+                      value={loginInfo.password}
                       name="password"
                       type={showPassword ? "text" : "password"}
                       required=""
@@ -97,6 +160,7 @@ const Login = () => {
                   </Link>
                 </p>
               </form>
+              <ToastContainer />
             </div>
           </div>
         </div>

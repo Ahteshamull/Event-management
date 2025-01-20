@@ -1,9 +1,11 @@
 const eventModel = require("../model/eventModel");
 
+
 const createEvent = async (req, res) => {
-  const { image, name, description, location } = req.body;
+  const { name, description, location } = req.body;
+const {image} = req.file
   const event = new eventModel({
-    image,
+    image:req.file.path,
     name,
     description,
     location,
@@ -17,6 +19,9 @@ const updateEvent = async (req, res) => {
   const updateEvent = await eventModel.findOneAndUpdate(
     { _id: id },
     { name: name },
+    {image:image},
+    {description:description},
+    {location:location},
     { new: true }
     );
     console.log(updateEvent)
@@ -27,11 +32,15 @@ const updateEvent = async (req, res) => {
 
 const deleteEvent = async (req, res) => {
     const { id } = req.params
-    const { image, name, description, location } = req.body
+   
     const deleteEvent = await eventModel.findOneAndDelete({
         _id:id
     })
     return res.status(200).send({message:"Delete event successfully",deleteEvent})
 }
+const allEvent = async(req,res) => {
+  const allEvents = await eventModel.find({})
+  return res.status(200).send({ Success: "ALl Events", Data: allEvents });
+}
 
-module.exports = { createEvent, updateEvent, deleteEvent };
+module.exports = { createEvent, updateEvent, deleteEvent, allEvent };
