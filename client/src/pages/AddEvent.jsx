@@ -113,7 +113,7 @@ const AddEvent = () => {
               id="description"
               name="description"
               rows={4}
-              className="mt-2 w-full border border-gray-400 p-3 rounded-md"
+              className="mt-2 w-full border border-gray-400 p-3 rounded-sm"
               placeholder="Enter event description"
               required=""
               defaultValue={""}
