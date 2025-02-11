@@ -105,7 +105,7 @@ const AddEvent = () => {
           <div className="mb-4">
             <label
               htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-600"
             >
               Event Description
             </label>
